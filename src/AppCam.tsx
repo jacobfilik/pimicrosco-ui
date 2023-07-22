@@ -1,11 +1,21 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import JMuxer from "jmuxer";
+import {
+  ExposureModel,
+  DRC,
+  ExpMode,
+  Iso,
+  AutoWhiteBalanceModel,
+  AWBMode,
+} from "./camera";
 import "./AppCam.css";
+import Exposure from "./Exposure";
+import AutoWhiteBalance from "./AutoWhiteBalance";
 
 //axios.defaults.proxy.host = "http://localhost";
 //axios.defaults.proxy.port = 8081;
-
+const baseurl2 = "/api/exposure";
 const baseurl = "/test";
 const snapurl = "/api/snapimage";
 
@@ -50,14 +60,14 @@ const ImageSnap = () => {
 
 function create_connection() {
   console.log("CREATE CONNECTION");
-  const ws = new WebSocket("ws://192.168.0.117:8000/ws/");
+  const ws = new WebSocket("ws://localhost:8000/ws/");
   ws.binaryType = "arraybuffer";
   return ws;
 }
 
 const CamStream = () => {
   //const [websock, setWebsock] = useState(null);
-  const [connected, setConnected] = useState(false);
+  const [connection, setConnection] = useState<WebSocket | null>(null);
 
   console.log("CREATE_CAM_STREAM");
   useEffect(() => {
@@ -111,12 +121,22 @@ const CamStream = () => {
         });
       }
     };
-    setConnected(true);
+    setConnection(websock);
+  };
+
+  const stop_connection = () => {
+    if (connection != null) {
+      connection.close();
+      setConnection(null);
+    }
   };
 
   return (
     <div id="streamStage">
-      <button onClick={make_connect}> Connect </button>
+      <button onClick={connection == null ? make_connect : stop_connection}>
+        {" "}
+        {connection == null ? "Connect" : "Disconnect"}{" "}
+      </button>
       <video
         width="960"
         height="720"
@@ -129,13 +149,48 @@ const CamStream = () => {
   );
 };
 
+const expModel: ExposureModel = {
+  iso: Iso.iso000,
+  analog_gain: 0.1,
+  digital_gain: 0.2,
+  exposure_speed: 0.3,
+  shutter_speed: 0.4,
+  compensation: 0.5,
+  mode: ExpMode.auto,
+  drc_strength: DRC.low,
+};
+
+const awbModel: AutoWhiteBalanceModel = {
+  mode: AWBMode.auto,
+  r_gain: 0,
+  b_gain: 0,
+};
+
+console.log(expModel);
+
 function AppCam() {
+  const [camModel, setCamModel] = useState<ExposureModel>(expModel);
+
+  function getParameters() {
+    axios.get(baseurl2).then((response) => {
+      console.log(response["data"]);
+      setCamModel(response["data"]);
+      // setValues(response["data"]);
+    });
+  }
+
+  useEffect(() => {
+    getParameters();
+  }, []);
+
   return (
     <div className="main-grid">
       <CamStream />
       <div className="button-grid">
         <Button />
         <ImageSnap />
+        <Exposure exposure={camModel} setModel={setCamModel} />
+        <AutoWhiteBalance awb={awbModel} setModel={() => {}} />
       </div>
       <div className="wrapper">
         <div>One</div>
