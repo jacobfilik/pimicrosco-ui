@@ -8,16 +8,19 @@ import {
   Iso,
   AutoWhiteBalanceModel,
   AWBMode,
+  Zoom,
 } from "./camera";
 import "./AppCam.css";
 import Exposure from "./Exposure";
 import AutoWhiteBalance from "./AutoWhiteBalance";
+import ZoomComponent from "./Zoom";
 
 //axios.defaults.proxy.host = "http://localhost";
 //axios.defaults.proxy.port = 8081;
 const baseurl2 = "/api/exposure";
 const baseurl = "/test";
 const snapurl = "/api/snapimage";
+const websocket_address = "ws://localhost:8000/ws/";
 
 function Button() {
   const [name, setName] = useState("Push");
@@ -41,7 +44,7 @@ const ImageSnap = () => {
         responseType: "text",
       })
       .then((response) => {
-        console.log(response.data);
+        // console.log(response.data);
         setBase64("data:image/jpeg;base64," + response.data);
       });
   };
@@ -60,7 +63,7 @@ const ImageSnap = () => {
 
 function create_connection() {
   console.log("CREATE CONNECTION");
-  const ws = new WebSocket("ws://localhost:8000/ws/");
+  const ws = new WebSocket(websocket_address);
   ws.binaryType = "arraybuffer";
   return ws;
 }
@@ -69,7 +72,6 @@ const CamStream = () => {
   //const [websock, setWebsock] = useState(null);
   const [connection, setConnection] = useState<WebSocket | null>(null);
 
-  console.log("CREATE_CAM_STREAM");
   useEffect(() => {
     console.log("USE EFFECT");
     // console.log(websock);
@@ -125,19 +127,18 @@ const CamStream = () => {
   };
 
   const stop_connection = () => {
+    console.log("Stop connection");
     if (connection != null) {
       connection.close();
       setConnection(null);
+      console.log("Closed called");
     }
   };
 
   return (
-    <div id="streamStage">
-      <button onClick={connection == null ? make_connect : stop_connection}>
-        {" "}
-        {connection == null ? "Connect" : "Disconnect"}{" "}
-      </button>
+    <div id="streamStage" className="video-stage">
       <video
+        className="video-container"
         width="960"
         height="720"
         muted
@@ -145,6 +146,12 @@ const CamStream = () => {
         autoPlay
         preload="none"
       ></video>
+      <div className="video-control">
+        <button onClick={connection == null ? make_connect : stop_connection}>
+          {" "}
+          {connection == null ? "Connect" : "Disconnect"}{" "}
+        </button>
+      </div>
     </div>
   );
 };
@@ -166,10 +173,19 @@ const awbModel: AutoWhiteBalanceModel = {
   b_gain: 0,
 };
 
+const zoomModel: Zoom = {
+  x: 0,
+  y: 0,
+  h: 1,
+  w: 1,
+};
+
 console.log(expModel);
 
 function AppCam() {
   const [camModel, setCamModel] = useState<ExposureModel>(expModel);
+  const [awb, setAWBModel] = useState<AutoWhiteBalanceModel>(awbModel);
+  const [zoom, setZoom] = useState<Zoom>(zoomModel);
 
   function getParameters() {
     axios.get(baseurl2).then((response) => {
@@ -187,10 +203,11 @@ function AppCam() {
     <div className="main-grid">
       <CamStream />
       <div className="button-grid">
+        <Exposure exposure={camModel} setModel={setCamModel} />
+        <AutoWhiteBalance awb={awb} setModel={setAWBModel} />
+        <ZoomComponent zoom={zoom} setModel={setZoom} />
         <Button />
         <ImageSnap />
-        <Exposure exposure={camModel} setModel={setCamModel} />
-        <AutoWhiteBalance awb={awbModel} setModel={() => {}} />
       </div>
       <div className="wrapper">
         <div>One</div>

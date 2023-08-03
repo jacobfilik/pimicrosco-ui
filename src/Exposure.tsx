@@ -34,6 +34,7 @@ function Exposure(props: {
     console.log(props.exposure);
     axios.put(exposure_put_url, props.exposure).then((response) => {
       console.log(response);
+      props.setModel(response["data"]);
       // setValues(response["data"]);
     });
   }
@@ -120,6 +121,7 @@ function Exposure(props: {
 
         <label htmlFor="espeed_field">Exposure Speed</label>
         <input
+          disabled
           name="exposure_speed"
           id="espeed_field"
           type="number"
