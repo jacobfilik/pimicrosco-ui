@@ -1,4 +1,4 @@
-import { Zoom } from "./camera";
+import { Zoom } from "../models/camera";
 import axios from "axios";
 
 const zoom_put_url = "/api/zoom";

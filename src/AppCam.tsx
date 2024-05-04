@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import JMuxer from "jmuxer";
+
 import {
   ExposureModel,
   DRC,
@@ -9,18 +9,20 @@ import {
   AutoWhiteBalanceModel,
   AWBMode,
   Zoom,
-} from "./camera";
+} from "./models/camera";
 import "./AppCam.css";
-import Exposure from "./Exposure";
-import AutoWhiteBalance from "./AutoWhiteBalance";
-import ZoomComponent from "./Zoom";
+import CameraStream from "./components/CameraStream";
+import Settings from "./components/Settings";
+import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
+import SnapGallery from "./components/SnapGallery";
+
+import "react-tabs/style/react-tabs.css";
 
 //axios.defaults.proxy.host = "http://localhost";
 //axios.defaults.proxy.port = 8081;
-const baseurl2 = "/api/exposure";
+
 const baseurl = "/test";
 const snapurl = "/api/snapimage";
-const websocket_address = "ws://localhost:8000/ws/";
 
 function Button() {
   const [name, setName] = useState("Push");
@@ -61,101 +63,6 @@ const ImageSnap = () => {
   }
 };
 
-function create_connection() {
-  console.log("CREATE CONNECTION");
-  const ws = new WebSocket(websocket_address);
-  ws.binaryType = "arraybuffer";
-  return ws;
-}
-
-const CamStream = () => {
-  //const [websock, setWebsock] = useState(null);
-  const [connection, setConnection] = useState<WebSocket | null>(null);
-
-  useEffect(() => {
-    console.log("USE EFFECT");
-    // console.log(websock);
-    // if (!connected) {
-    //   console.log("WEBSOCK null");
-    //   setConnected(true);
-    //   setWebsock(create_connection());
-    //   return;
-    // }
-
-    // if (connected && websock != null) {
-    // const websock = create_connection();
-    // console.log("WEBSOCK not null");
-
-    // const jmuxer = new JMuxer({
-    //   node: "stream",
-    //   mode: "video",
-    //   flushingTime: 0,
-    //   fps: 30,
-    //   debug: false,
-    // });
-    // console.log("SET ON MESSAGE");
-    // websock.onmessage = function (event) {
-    //   if (!document.hidden) {
-    //     jmuxer.feed({
-    //       video: new Uint8Array(event.data),
-    //     });
-    //   }
-    // };
-    // }
-  }, []);
-
-  const make_connect = () => {
-    const websock = create_connection();
-    console.log("WEBSOCK not null");
-
-    const jmuxer = new JMuxer({
-      node: "stream",
-      mode: "video",
-      flushingTime: 0,
-      fps: 30,
-      debug: false,
-    });
-    console.log("SET ON MESSAGE");
-    websock.onmessage = function (event) {
-      if (!document.hidden) {
-        jmuxer.feed({
-          video: new Uint8Array(event.data),
-        });
-      }
-    };
-    setConnection(websock);
-  };
-
-  const stop_connection = () => {
-    console.log("Stop connection");
-    if (connection != null) {
-      connection.close();
-      setConnection(null);
-      console.log("Closed called");
-    }
-  };
-
-  return (
-    <div id="streamStage" className="video-stage">
-      <video
-        className="video-container"
-        width="960"
-        height="720"
-        muted
-        id="stream"
-        autoPlay
-        preload="none"
-      ></video>
-      <div className="video-control">
-        <button onClick={connection == null ? make_connect : stop_connection}>
-          {" "}
-          {connection == null ? "Connect" : "Disconnect"}{" "}
-        </button>
-      </div>
-    </div>
-  );
-};
-
 const expModel: ExposureModel = {
   iso: Iso.iso000,
   analog_gain: 0.1,
@@ -183,29 +90,26 @@ const zoomModel: Zoom = {
 console.log(expModel);
 
 function AppCam() {
-  const [camModel, setCamModel] = useState<ExposureModel>(expModel);
-  const [awb, setAWBModel] = useState<AutoWhiteBalanceModel>(awbModel);
-  const [zoom, setZoom] = useState<Zoom>(zoomModel);
-
-  function getParameters() {
-    axios.get(baseurl2).then((response) => {
-      console.log(response["data"]);
-      setCamModel(response["data"]);
-      // setValues(response["data"]);
-    });
-  }
-
-  useEffect(() => {
-    getParameters();
-  }, []);
-
   return (
     <div className="main-grid">
-      <CamStream />
+      <div className="layer1">
+        <Settings></Settings>
+      </div>
+      <div className="layer2">
+        <Tabs>
+          <TabList>
+            <Tab>Stream</Tab>
+            <Tab>Gallery</Tab>
+          </TabList>
+          <TabPanel>
+            <CameraStream />
+          </TabPanel>
+          <TabPanel>
+            <SnapGallery />
+          </TabPanel>
+        </Tabs>
+      </div>
       <div className="button-grid">
-        <Exposure exposure={camModel} setModel={setCamModel} />
-        <AutoWhiteBalance awb={awb} setModel={setAWBModel} />
-        <ZoomComponent zoom={zoom} setModel={setZoom} />
         <Button />
         <ImageSnap />
       </div>

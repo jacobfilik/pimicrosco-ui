@@ -9,12 +9,13 @@ export default defineConfig({
       // string shorthand: http://localhost:5173/foo -> http://localhost:4567/foo
       // "/test": "http://192.168.0.117:8000/",
       "/api": {
-        target: "http://localhost:8000/",
+        // target: "http://localhost:8000/",
+        target: "http://192.168.0.117:8000/",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
       // "/ws": {
-      //   target: "ws://192.168.0.117:8000/ws",
+      //   target: "ws://localhost:8000/ws",
       //   ws: true,
       // },
     },

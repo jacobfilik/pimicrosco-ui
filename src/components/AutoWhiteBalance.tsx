@@ -1,4 +1,4 @@
-import { AWBMode, AutoWhiteBalanceModel } from "./camera";
+import { AWBMode, AutoWhiteBalanceModel } from "../models/camera";
 import axios from "axios";
 
 const zoom_put_url = "/api/awb";

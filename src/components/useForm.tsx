@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ExposureModel } from "./camera";
+import { ExposureModel } from "../models/camera";
 
 // useForm functional componen
 export const useForm = (

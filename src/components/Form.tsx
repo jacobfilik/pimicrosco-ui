@@ -1,11 +1,13 @@
+import { useEffect } from "react";
 import { useForm } from "./useForm";
 import axios from "axios";
-import { DRC, ExpMode, ExposureModel, Iso } from "./camera";
-import "./Exposure.css";
+import { DRC, ExpMode, ExposureModel, Iso } from "../models/camera";
+import "./Form.css";
 
-const exposure_put_url = "/api/setexp";
+const baseurl = "/api/data";
+const baseurl2 = "/api/setexp";
 
-function Exposure(props: {
+function Parameters(props: {
   exposure: ExposureModel;
   setModel: React.Dispatch<ExposureModel>;
 }) {
@@ -32,9 +34,8 @@ function Exposure(props: {
   // a submit function that will execute upon form submission
   async function updateValuesCallback() {
     console.log(props.exposure);
-    axios.put(exposure_put_url, props.exposure).then((response) => {
+    axios.put(baseurl2, props.exposure).then((response) => {
       console.log(response);
-      props.setModel(response["data"]);
       // setValues(response["data"]);
     });
   }
@@ -121,7 +122,6 @@ function Exposure(props: {
 
         <label htmlFor="espeed_field">Exposure Speed</label>
         <input
-          disabled
           name="exposure_speed"
           id="espeed_field"
           type="number"
@@ -159,4 +159,4 @@ function Exposure(props: {
   );
 }
 
-export default Exposure;
+export default Parameters;
