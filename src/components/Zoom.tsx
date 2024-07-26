@@ -1,6 +1,8 @@
 import { Zoom } from "../models/camera";
 import axios from "axios";
 
+import { Grid, FormControl, TextField } from "@mui/material";
+
 const zoom_put_url = "/api/zoom";
 
 function ZoomComponent(props: { zoom: Zoom; setModel: React.Dispatch<Zoom> }) {
@@ -24,60 +26,86 @@ function ZoomComponent(props: { zoom: Zoom; setModel: React.Dispatch<Zoom> }) {
   };
 
   return (
-    // don't mind this ugly form :P
-    <form onSubmit={onSubmit}>
-      <div className="form-grid">
-        <label htmlFor="x_field">X</label>
-        <input
-          name="x"
-          id="x_field"
-          type="number"
-          value={props.zoom.x}
-          step="any"
-          placeholder="number"
-          onChange={onChange}
-          required
-        />
-
-        <label htmlFor="y_field">Y</label>
-        <input
-          name="y"
-          id="y_field"
-          type="number"
-          value={props.zoom.y}
-          step="any"
-          placeholder="number"
-          onChange={onChange}
-          required
-        />
-
-        <label htmlFor="height_field">Height</label>
-        <input
-          name="h"
-          id="h_field"
-          type="number"
-          value={props.zoom.h}
-          step="any"
-          placeholder="number"
-          onChange={onChange}
-          required
-        />
-
-        <label htmlFor="w_field">Width</label>
-        <input
-          name="w"
-          id="w_field"
-          type="number"
-          value={props.zoom.w}
-          step="any"
-          placeholder="number"
-          onChange={onChange}
-          required
-        />
-
-        <button type="submit">Update</button>
-      </div>
-    </form>
+    <Grid
+      container
+      justifyContent="flex-start"
+      direction="row"
+      spacing={2}
+      width={"600px"}
+    >
+      <Grid item xs={6}>
+        <FormControl>
+          <TextField
+            margin="dense"
+            id="xfield"
+            type="number"
+            inputProps={{ step: "any" }}
+            label="X"
+            variant="outlined"
+            value={props.zoom.x}
+            onChange={(e) => {
+              const newModel = { ...props.zoom };
+              newModel.x = e.target.value;
+              props.setModel(newModel);
+            }}
+          />
+        </FormControl>
+      </Grid>
+      <Grid item xs={6}>
+        <FormControl>
+          <TextField
+            margin="dense"
+            id="yfield"
+            type="number"
+            inputProps={{ step: "any" }}
+            label="Y"
+            variant="outlined"
+            value={props.zoom.y}
+            onChange={(e) => {
+              const newModel = { ...props.zoom };
+              newModel.y = e.target.value;
+              props.setModel(newModel);
+            }}
+          />
+        </FormControl>
+      </Grid>
+      <Grid item xs={6}>
+        <FormControl>
+          <TextField
+            margin="dense"
+            id="hfield"
+            type="number"
+            inputProps={{ step: "any" }}
+            label="Height"
+            variant="outlined"
+            value={props.zoom.h}
+            onChange={(e) => {
+              const newModel = { ...props.zoom };
+              newModel.h = e.target.value;
+              props.setModel(newModel);
+            }}
+          />
+        </FormControl>
+      </Grid>
+      <Grid item xs={6}>
+        <FormControl>
+          <TextField
+            margin="dense"
+            id="wfield"
+            type="number"
+            inputProps={{ step: "any" }}
+            label="Width"
+            variant="outlined"
+            value={props.zoom.w}
+            onChange={(e) => {
+              const newModel = { ...props.zoom };
+              newModel.w = e.target.value;
+              props.setModel(newModel);
+            }}
+          />
+        </FormControl>
+      </Grid>
+    </Grid>
   );
 }
 

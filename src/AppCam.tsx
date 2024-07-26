@@ -10,11 +10,23 @@ import {
   AWBMode,
   Zoom,
 } from "./models/camera";
-import "./AppCam.css";
 import CameraStream from "./components/CameraStream";
 import Settings from "./components/Settings";
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import SnapGallery from "./components/SnapGallery";
+
+import CssBaseline from "@mui/material";
+
+import {
+  AppBar,
+  Toolbar,
+  IconButton,
+  Typography,
+  Box,
+  Drawer,
+  Button,
+  CardMedia,
+} from "@mui/material";
 
 import "react-tabs/style/react-tabs.css";
 
@@ -24,18 +36,18 @@ import "react-tabs/style/react-tabs.css";
 const baseurl = "/test";
 const snapurl = "/api/snapimage";
 
-function Button() {
-  const [name, setName] = useState("Push");
+// function Button() {
+//   const [name, setName] = useState("Push");
 
-  const get_req = () => {
-    setName("working");
-    axios.get(baseurl).then((response) => {
-      setName(response["data"]["message"]);
-    });
-  };
+//   const get_req = () => {
+//     setName("working");
+//     axios.get(baseurl).then((response) => {
+//       setName(response["data"]["message"]);
+//     });
+//   };
 
-  return <button onClick={get_req}> {name}</button>;
-}
+//   return <button onClick={get_req}> {name}</button>;
+// }
 
 const ImageSnap = () => {
   const [base64, setBase64] = useState<string>();
@@ -52,13 +64,13 @@ const ImageSnap = () => {
   };
 
   if (base64 === null) {
-    return <div></div>;
+    return <Box></Box>;
   } else {
     return (
-      <div className="butonimage">
-        <button onClick={get_req}> Get</button>
-        <img src={base64} width="128" />
-      </div>
+      <Box>
+        <Button onClick={get_req}> Get</Button>
+        <CardMedia component="img" src={base64} width="128" />
+      </Box>
     );
   }
 };
@@ -90,36 +102,60 @@ const zoomModel: Zoom = {
 console.log(expModel);
 
 function AppCam() {
+  const [open, toggleDrawer] = useState(false);
   return (
-    <div className="main-grid">
-      <div className="layer1">
-        <Settings></Settings>
-      </div>
-      <div className="layer2">
-        <Tabs>
-          <TabList>
-            <Tab>Stream</Tab>
-            <Tab>Gallery</Tab>
-          </TabList>
-          <TabPanel>
-            <CameraStream />
-          </TabPanel>
-          <TabPanel>
-            <SnapGallery />
-          </TabPanel>
-        </Tabs>
-      </div>
-      <div className="button-grid">
-        <Button />
-        <ImageSnap />
-      </div>
-      <div className="wrapper">
-        <div>One</div>
-        <div>Two</div>
-        <div>Three</div>
-      </div>
-    </div>
+    <Box sx={{ display: "flex", flexDirection: "column" }}>
+      <AppBar position="static">
+        <Toolbar variant="dense">
+          <IconButton
+            edge="start"
+            color="inherit"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+          ></IconButton>
+          <Typography variant="h6" color="inherit" component="div">
+            Microscope
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <CameraStream />
+      <ImageSnap />
+      <Button onClick={() => toggleDrawer(true)}> Settings </Button>
+      <Drawer open={open} onClose={() => toggleDrawer(false)}>
+        <Settings />
+      </Drawer>
+    </Box>
   );
+  // return (
+  //   <div className="main-grid">
+  //     <div className="layer1">
+  //       <Settings></Settings>
+  //     </div>
+  //     <div className="layer2">
+  //       <Tabs>
+  //         <TabList>
+  //           <Tab>Stream</Tab>
+  //           <Tab>Gallery</Tab>
+  //         </TabList>
+  //         <TabPanel>
+  //           <CameraStream />
+  //         </TabPanel>
+  //         <TabPanel>
+  //           <SnapGallery />
+  //         </TabPanel>
+  //       </Tabs>
+  //     </div>
+  //     <div className="button-grid">
+  //       <Button />
+  //       <ImageSnap />
+  //     </div>
+  //     <div className="wrapper">
+  //       <div>One</div>
+  //       <div>Two</div>
+  //       <div>Three</div>
+  //     </div>
+  //   </div>
+  // );
 }
 
 export default AppCam;

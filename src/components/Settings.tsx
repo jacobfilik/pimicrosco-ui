@@ -5,6 +5,8 @@ import Exposure from "./Exposure";
 import AutoWhiteBalance from "./AutoWhiteBalance";
 import ZoomComponent from "./Zoom";
 
+import { Divider, Stack } from "@mui/material";
+
 import {
   ExposureModel,
   DRC,
@@ -59,11 +61,14 @@ const Settings = () => {
   }, []);
 
   return (
-    <div>
+    <Stack spacing={1}>
+      <Divider textAlign="left">Exposure</Divider>
       <Exposure exposure={camModel} setModel={setCamModel} />
+      <Divider textAlign="left">White Balance</Divider>
       <AutoWhiteBalance awb={awb} setModel={setAWBModel} />
+      <Divider textAlign="left">Zoom</Divider>
       <ZoomComponent zoom={zoom} setModel={setZoom} />
-    </div>
+    </Stack>
   );
 };
 

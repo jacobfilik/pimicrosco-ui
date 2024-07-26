@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/material": "^5.15.16",
     "@types/jmuxer": "^2.0.3",
     "axios": "^1.4.0",
     "jmuxer": "^2.0.5",
@@ -27,7 +30,13 @@
     "eslint": "^8.38.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
+    "msw": "2.3.0-ws.rc-6",
     "typescript": "^5.0.2",
     "vite": "^4.3.9"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

@@ -1,6 +1,16 @@
 import { AWBMode, AutoWhiteBalanceModel } from "../models/camera";
 import axios from "axios";
 
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  Stack,
+  MenuItem,
+  TextField,
+  Grid,
+} from "@mui/material";
+
 const zoom_put_url = "/api/awb";
 
 function AutoWhiteBalance(props: {
@@ -41,52 +51,73 @@ function AutoWhiteBalance(props: {
   };
 
   return (
-    // don't mind this ugly form :P
-    <form onSubmit={onSubmit}>
-      <div className="form-grid">
-        <label htmlFor="awb_mode_field">AWB Mode</label>
-        <select
-          name="mode"
-          id="awb_mode_field"
-          value={props.awb.mode}
-          placeholder="number"
-          onChange={onSelect}
-          required
-        >
-          {Object.keys(AWBMode).map((aw) => (
-            <option key={aw} value={aw}>
-              {aw}
-            </option>
-          ))}
-        </select>
-
-        <label htmlFor="rgain_field">Red Gain</label>
-        <input
-          name="r_gain"
-          id="rgain_field"
-          type="number"
-          value={props.awb.r_gain}
-          step="any"
-          placeholder="number"
-          onChange={onChange}
-          required
-        />
-
-        <label htmlFor="bgain_field">Blue Gain</label>
-        <input
-          name="b_gain"
-          id="bgain_field"
-          type="number"
-          value={props.awb.b_gain}
-          step="any"
-          placeholder="number"
-          onChange={onChange}
-          required
-        />
-
-        <button type="submit">Update</button>
-      </div>
-    </form>
+    <Grid
+      container
+      justifyContent="flex-start"
+      direction="row"
+      spacing={2}
+      width={"600px"}
+    >
+      <Grid item xs={6}>
+        <FormControl>
+          <InputLabel id="awbmode">AWB Mode</InputLabel>
+          <Select
+            sx={{ minWidth: 100 }}
+            name="AWB Mode"
+            id="awbmode"
+            label="AWB Mode"
+            value={props.awb.mode}
+            onChange={(e) => {
+              const newModel = { ...props.awb };
+              newModel.mode = e.target.value as AWBMode;
+              props.setModel(newModel);
+            }}
+          >
+            {Object.keys(AWBMode).map((aw) => (
+              <MenuItem key={aw} value={aw}>
+                {aw}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Grid>
+      <Grid item xs={6}>
+        <FormControl>
+          <TextField
+            margin="dense"
+            id="rgain"
+            type="number"
+            inputProps={{ step: "any" }}
+            label="Red gain"
+            variant="outlined"
+            value={props.awb.r_gain}
+            onChange={(e) => {
+              const newModel = { ...props.awb };
+              newModel.r_gain = e.target.value;
+              props.setModel(newModel);
+            }}
+          />
+        </FormControl>
+      </Grid>
+      <Grid item xs={6}>
+        <FormControl>
+          <TextField
+            margin="dense"
+            id="bgain"
+            type="number"
+            inputProps={{ step: "any" }}
+            label="Blue gain"
+            variant="outlined"
+            value={props.awb.b_gain}
+            onChange={(e) => {
+              const newModel = { ...props.awb };
+              newModel.b_gain = e.target.value as number;
+              props.setModel(newModel);
+            }}
+          />
+        </FormControl>
+      </Grid>
+    </Grid>
   );
 }
 

@@ -1,7 +1,15 @@
 import { useForm } from "./useForm";
 import axios from "axios";
 import { DRC, ExpMode, ExposureModel, Iso } from "../models/camera";
-import "./Exposure.css";
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Stack,
+  TextField,
+  Grid,
+} from "@mui/material";
 
 const exposure_put_url = "/api/setexp";
 
@@ -45,117 +53,176 @@ function Exposure(props: {
   // shutter_speed: number;
   // compensation: number;
   return (
-    // don't mind this ugly form :P
-    <form onSubmit={onSubmit}>
-      <div className="form-grid">
-        <label htmlFor="iso_field">Iso</label>
-        <select
-          name="iso"
-          id="iso_field"
-          value={props.exposure.iso}
-          placeholder="number"
-          onChange={onSelect}
-          required
-        >
-          {Object.keys(Iso)
-            .filter((iso) => parseInt(iso) >= 0)
-            .map((iso) => (
-              <option key={iso} value={iso}>
-                {iso}
-              </option>
+    <Grid
+      container
+      justifyContent="flex-start"
+      direction="row"
+      width={"600px"}
+      spacing={2}
+      columns={2}
+    >
+      <Grid item xs={1}>
+        <FormControl>
+          <InputLabel id="iso">Iso</InputLabel>
+          <Select
+            sx={{ minWidth: 100 }}
+            name="Iso"
+            id="iso"
+            label="Iso"
+            value={props.exposure.iso}
+            onChange={(e) => {
+              const newModel = { ...props.exposure };
+              newModel.iso = e.target.value;
+              props.setModel(newModel);
+            }}
+          >
+            {Object.keys(Iso)
+              .filter((iso) => parseInt(iso) >= 0)
+              .map((iso) => (
+                <MenuItem key={iso} value={iso}>
+                  {iso}
+                </MenuItem>
+              ))}
+          </Select>
+        </FormControl>
+      </Grid>
+      <Grid item xs={1}>
+        <FormControl>
+          <InputLabel id="expmode">Exposure Mode</InputLabel>
+          <Select
+            sx={{ minWidth: 100 }}
+            name="Exposure Mode"
+            id="expmode"
+            label="Exposure Mode"
+            value={props.exposure.mode}
+            onChange={(e) => {
+              const newModel = { ...props.exposure };
+              newModel.mode = e.target.value;
+              props.setModel(newModel);
+            }}
+          >
+            {Object.keys(ExpMode).map((ex) => (
+              <MenuItem key={ex} value={ex}>
+                {ex}
+              </MenuItem>
             ))}
-        </select>
-        <label htmlFor="exmode_field">Exposure Mode</label>
-        <select
-          name="mode"
-          id="exmode_field"
-          value={props.exposure.mode}
-          placeholder="text"
-          onChange={onSelect}
-          required
-        >
-          {Object.keys(ExpMode).map((ex) => (
-            <option key={ex} value={ex}>
-              {ex}
-            </option>
-          ))}
-        </select>
-
-        <label htmlFor="drc_field">DRC Strength</label>
-        <select
-          name="drc_strength"
-          id="drc_field"
-          value={props.exposure.drc_strength}
-          placeholder="text"
-          onChange={onSelect}
-          required
-        >
-          {Object.keys(DRC).map((ex) => (
-            <option key={ex} value={ex}>
-              {ex}
-            </option>
-          ))}
-        </select>
-
-        <label htmlFor="again_field">Analog Gain</label>
-        <input
-          name="analog_gain"
-          id="again_field"
-          type="number"
-          value={props.exposure.analog_gain}
-          placeholder="number"
-          onChange={onChange}
-          required
-        />
-
-        <label htmlFor="dgain_field">Digital Gain</label>
-        <input
-          name="digital_gain"
-          id="dgain_field"
-          type="number"
-          value={props.exposure.digital_gain}
-          placeholder="number"
-          onChange={onChange}
-          required
-        />
-
-        <label htmlFor="espeed_field">Exposure Speed</label>
-        <input
-          disabled
-          name="exposure_speed"
-          id="espeed_field"
-          type="number"
-          value={props.exposure.exposure_speed}
-          placeholder="number"
-          onChange={onChange}
-          required
-        />
-
-        <label htmlFor="sspeed_field">Shutter Speed</label>
-        <input
-          name="shutter_speed"
-          id="espeed_field"
-          type="number"
-          value={props.exposure.shutter_speed}
-          placeholder="number"
-          onChange={onChange}
-          required
-        />
-
-        <label htmlFor="compensation_field">Compensation</label>
-        <input
-          disabled
-          name="compensation"
-          id="compensation_field"
-          type="number"
-          value={props.exposure.compensation}
-          placeholder="number"
-          onChange={onChange}
-          required
-        />
-        <button type="submit">Update</button>
-      </div>
-    </form>
+          </Select>
+        </FormControl>
+      </Grid>
+      <Grid item xs={1}>
+        <FormControl>
+          <InputLabel id="drc">DRC Strength</InputLabel>
+          <Select
+            sx={{ minWidth: 100 }}
+            name="DRC Strength"
+            id="drc"
+            label="DRC Strength"
+            value={props.exposure.drc_strength}
+            onChange={(e) => {
+              const newModel = { ...props.exposure };
+              newModel.drc_strength = e.target.value;
+              props.setModel(newModel);
+            }}
+          >
+            {Object.keys(DRC).map((ex) => (
+              <MenuItem key={ex} value={ex}>
+                {ex}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Grid>
+      <Grid item xs={1}>
+        <FormControl>
+          <TextField
+            margin="dense"
+            id="again"
+            type="number"
+            inputProps={{ step: "any" }}
+            label="Analog Gain"
+            variant="outlined"
+            value={props.exposure.analog_gain}
+            onChange={(e) => {
+              const newModel = { ...props.exposure };
+              newModel.analog_gain = e.target.value;
+              props.setModel(newModel);
+            }}
+          />
+        </FormControl>
+      </Grid>
+      <Grid item xs={1}>
+        <FormControl>
+          <TextField
+            margin="dense"
+            id="again"
+            type="number"
+            inputProps={{ step: "any" }}
+            label="Digital Gain"
+            variant="outlined"
+            value={props.exposure.digital_gain}
+            onChange={(e) => {
+              const newModel = { ...props.exposure };
+              newModel.digital_gain = e.target.value;
+              props.setModel(newModel);
+            }}
+          />
+        </FormControl>
+      </Grid>
+      <Grid item xs={1}>
+        <FormControl>
+          <TextField
+            margin="dense"
+            id="espeed"
+            type="number"
+            inputProps={{ step: "any" }}
+            label="Exposure Speed"
+            variant="outlined"
+            value={props.exposure.exposure_speed}
+            onChange={(e) => {
+              const newModel = { ...props.exposure };
+              newModel.exposure_speed = e.target.value;
+              props.setModel(newModel);
+            }}
+          />
+        </FormControl>
+      </Grid>
+      <Grid item xs={1}>
+        <FormControl>
+          <TextField
+            margin="dense"
+            id="sspeed"
+            type="number"
+            inputProps={{ step: "any" }}
+            label="Shutter Speed"
+            variant="outlined"
+            value={props.exposure.shutter_speed}
+            onChange={(e) => {
+              const newModel = { ...props.exposure };
+              newModel.shutter_speed = e.target.value;
+              props.setModel(newModel);
+            }}
+          />
+        </FormControl>
+      </Grid>
+      <Grid item xs={1}>
+        <FormControl>
+          <TextField
+            margin="dense"
+            id="comp"
+            type="number"
+            inputProps={{ step: "any" }}
+            label="Compensation"
+            variant="outlined"
+            value={props.exposure.compensation}
+            onChange={(e) => {
+              const newModel = { ...props.exposure };
+              newModel.compensation = e.target.value;
+              props.setModel(newModel);
+            }}
+          />
+        </FormControl>
+      </Grid>
+    </Grid>
   );
 }
 

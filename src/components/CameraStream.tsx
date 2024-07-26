@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import JMuxer from "jmuxer";
-import "./CameraStream.css";
-// const websocket_address = "ws://localhost:8000/ws/";
+
+import { Box, CardMedia, Button } from "@mui/material";
+// import "./CameraStream.css";
+const websocket_address = "ws://localhost:8000/ws/";
 //
 
-const websocket_address = "ws://192.168.0.117:8000/ws/";
+// const websocket_address = "ws://192.168.0.117:8000/ws/";
 
 function create_connection() {
   console.log("CREATE CONNECTION");
@@ -34,6 +36,9 @@ const CameraStream = () => {
     });
     console.log("SET ON MESSAGE");
     websock.onmessage = function (event) {
+      console.log("MESSAGE");
+      console.log(event.data);
+
       if (!document.hidden) {
         jmuxer.feed({
           video: new Uint8Array(event.data),
@@ -53,23 +58,23 @@ const CameraStream = () => {
   };
 
   return (
-    <div id="streamStage" className="video-stage">
-      <video
-        className="video-container"
-        // width="960"
-        // height="720"
-        muted
+    <Box>
+      <CardMedia
+        component="video"
         id="stream"
         autoPlay
         preload="none"
-      ></video>
-      <div className="video-control">
-        <button onClick={connection == null ? make_connect : stop_connection}>
-          {" "}
+        muted
+        // width="960"
+        height="720"
+        sx={{ objectFit: "contain" }}
+      ></CardMedia>
+      <Box position="absolute" right="0px">
+        <Button onClick={connection == null ? make_connect : stop_connection}>
           {connection == null ? "Connect" : "Disconnect"}{" "}
-        </button>
-      </div>
-    </div>
+        </Button>
+      </Box>
+    </Box>
   );
 };
 
